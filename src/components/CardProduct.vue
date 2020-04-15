@@ -10,17 +10,17 @@
 			</div>
 			<div class="bottom">
 				<div class="left">
-					<div class="details">
-						<h1 class="m-0 p-0">{{ cardData.nome ? cardData.nome : "---" }}</h1>
+					<div class="details m-auto p-0" :class="makeSimpleCardProduct() ? 'w-100' : ''">
+						<h2 class="m-0 p-0">{{ cardData.nome ? cardData.nome : "---" }}</h2>
 						<p class="m-0 p-0">R$ {{ cardData.preco ? cardData.preco : "---" }}</p>
 					</div>
-					<div class="buy" @click="adicionarItem()">
+					<div v-if="!makeSimpleCardProduct()" class="buy" @click="adicionarItem()">
 						<i class="fas fa-cart-plus"></i>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="inside">
+		<div v-if="!makeSimpleCardProduct()" class="inside">
 			<div class="icon" @click="verDetalhes()">
 				<i class="fas fa-info-circle"></i>
 			</div>
@@ -37,17 +37,29 @@ export default {
 	},
 	methods: {
 		verDetalhes() {
-			if (!this.cardData.id) return;
-			this.$emit("verDetalhes", this.cardData.id);			
-			this.$router.push('details');
+			if (this.cardData.id < 0) return;
+
+			//this.$emit("verDetalhes", this.cardData.id);			
+			this.$router.push({
+				name: 'product', 	
+				params: { 
+					id: this.cardData.id, 
+					cardData: this.cardData 
+				}
+			});
 		},
 		adicionarItem(){
 			this.$emit("adicionaProd");
 			console.log("adicionar Item: +1");
+			this.$store.commit('addProdutoToCart', this.cardData.id);
 		},
 		getImgUrl(){			
 			let img = require(`@/assets/img/foods/svg/${this.cardData.icon}.svg`);
 			return img;
+		},
+		makeSimpleCardProduct(){
+			let page = this.$route.name;
+			return (page == 'product') || (page == 'productEdit') || (page == 'create');
 		}
 	}
 };
@@ -87,7 +99,7 @@ export default {
 	justify-content: center;
 }
 img.img-card {
-	height: 55%;
+	height: 40%;
 }
 
 /* BOTTOM CARD */
@@ -107,9 +119,15 @@ img.img-card {
 	float: left;
 }
 .wrapper .container .bottom .left .details {
-	padding: 20px;
-	float: left;
-	width: calc(70% - 40px);
+	padding: 10px;
+	float: left;	
+	height: 100%;
+	width: 70%;
+	/* kwidth: calc(70% - 40px); */
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+	justify-content: center;
 }
 .wrapper .container .bottom .left .buy {
 	float: right;

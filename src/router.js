@@ -2,6 +2,7 @@ import VueRouter from 'vue-router';
 import Home from "./components/Home.vue";
 import Create from "./components/Create.vue";
 import Details from "./components/Details.vue";
+import Edit from "./components/Edit.vue";
 
 
 export default new VueRouter({
@@ -9,13 +10,16 @@ export default new VueRouter({
     routes: [
         {
             path: '/',
-            name: 'home',
-            component: Home
+            redirect: '/home',
+            
 		},
 		{
             path: '',
-            name: 'home',
-            component: Home
+            redirect: '/home',            
+		},
+		{
+            path: '*',
+            redirect: '/home',            
 		},
 		{
             path: '/home',
@@ -28,21 +32,18 @@ export default new VueRouter({
             component: Create
 		},
 		{
-            path: '/details',
-            name: 'details',
-            component: Details
-        },
-        // {
-        //     path: '/filme/:id',
-        //     name: 'filme',
-        //     component: Filme,
-        //     children: [
-        //         {
-        //             path: 'edit',
-        //             name: 'editar-filme',
-        //             component: EditarFilme
-        //         }
-        //     ]
-        // },
+            path: '/product/:id',
+            name: 'product',
+			component: Details,
+			props: true,
+			children: [
+				{
+					path: 'edit',
+					name: 'productEdit',
+					component: Edit,
+					props: true,
+				}
+			]
+        }        
     ]
 });
